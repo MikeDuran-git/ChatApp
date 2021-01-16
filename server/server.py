@@ -72,7 +72,7 @@ class Server(threading.Thread):
         for connection in self.connections:
             # Send to all connected clients except the source client
             if connection.sockname != source:
-                connection.send(message.encode('ascii'))
+                connection.send(message)
                 print("[+] Sending to " + str(connection.sockname))
     
 
