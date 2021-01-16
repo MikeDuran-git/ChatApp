@@ -29,8 +29,7 @@ class ServerSocket(threading.Thread):
                 return
 
     def send(self, message):
-        msg=message + "\n"
-        self.client.send(msg.encode('ascii'))
+        self.client.sendall(message.encode('ascii'))
         pass
 
 
@@ -113,7 +112,7 @@ def server_managing(server):
             target=input("Target : ")
             msg=input("Message: ")
             print("sending msg to "+ str(server.connections[int(target)].sockname))
-            server.connections[int(target)].client.sendall(msg.encode('ascii'))
+            server.connections[int(target)].send(msg)
             pass
 
 if __name__ == '__main__':
