@@ -11,14 +11,17 @@ class ServerSocket(threading.Thread):
         self.client = client
         self.sockname = sockname
         self.server = server
-
+        self.client_name= None
     def run(self):
+        
+        self.client_name=self.client.recv(1024).decode('ascii')#get the name
+        print(self.client_name + " connected")
         while True: #a true loop inside the specific thread for the client.
-
             message=self.client.recv(1024).decode('ascii')# waiting for client message
 
             if message:
-                print('{} says {!r}'.format(self.sockname, message))
+                #what the client broadcasts to everyone
+                print('{} : {!r}'.format(self.client_name, message))
                 self.server.broadcast(message, self.sockname)
             
             else:
@@ -92,6 +95,7 @@ def server_managing(server):
 
     while True:
         ipt = input('')
+        
         if ipt == 'q':
             print('[*] Closing all connections...')
             for connection in server.connections:
@@ -100,14 +104,16 @@ def server_managing(server):
                     connection.client.sendall("QUIT".encode('ascii'))
                     connection.client.close()
                     print("[+]" +str(connection.sockname)+" successfuly closed")
-                except Exception as e :
+                except Exception :
                     print("[-] Closing "+str(connection.sockname)+" failed.")
-            
+    
             print('[*] Shutting down the server...')
             os._exit(0)
+        
         elif ipt == 'show clients' or ipt=='clients':
             for connection in server.connections:
-                print(connection.sockname)
+                print(str(connection.sockname) + " : "+ str(connection.client_name))
+        
         elif ipt =="send":
             target=input("Target : ")
             msg=input("Message: ")
@@ -128,4 +134,3 @@ if __name__ == '__main__':
 
     server_managing = threading.Thread(target = server_managing, args = (server,))
     server_managing.start()
-

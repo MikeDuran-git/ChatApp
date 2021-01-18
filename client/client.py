@@ -22,7 +22,8 @@ class Client():
         except Exception as e :
             print("[-] Failed to connect to server " +str(self.host) + "," + str(self.port))
             exit(1)
-
+        #send the name of the client
+        self.sock.sendall(self.name.encode('ascii'))
         #create send and receive
         send=Send(args.host,args.p,self.sock)
         receive=Receive(args.host,args.p,self.sock)
@@ -65,8 +66,6 @@ class Receive(threading.Thread):
                 print('[*] Quitting...')
                 self.sock.close()
                 os._exit(0)
-                
-                pass
 
 
 
@@ -78,7 +77,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Create and start client
-    client=Client(args.host,args.p,"Mike")
+    client=Client(args.host,args.p,"Lucy")
     client.start()
 
 
