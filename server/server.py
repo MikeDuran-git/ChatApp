@@ -12,18 +12,17 @@ class ServerSocket(threading.Thread):
         self.sockname = sockname
         self.server = server
         self.client_name= None
+    
     def run(self):
         
         self.client_name=self.client.recv(1024).decode('ascii')#get the name
         print(self.client_name + " connected")
+        
         while True: #a true loop inside the specific thread for the client.
             message=self.client.recv(1024).decode('ascii')# waiting for client message
-
             if message:
-                #what the client broadcasts to everyone
-                print('{} : {!r}'.format(self.client_name, message))
-                self.server.broadcast(message, self.sockname)
-            
+                print(str(self.client_name) + "  : "+ str(message))
+                self.client_message_management(message)            
             else:
                 # Client has closed the socket, exit the thread
                 print('{} has closed the connection'.format(self.sockname))
@@ -35,7 +34,52 @@ class ServerSocket(threading.Thread):
         self.client.sendall(message.encode('ascii'))
         pass
 
+    def client_message_management(self,message):
+        if message == "private message": #send to a specific client
+            
+            #sent to the client the list of all clients
+            clients_list=self.get_clients_list()
+            print("[*] SENDING CLIENT LIST")
+            self.send(clients_list)
+            
+            #wait for the client to choose the target
+            target_and_message=self.client.recv(1024).decode('ascii')
+            
+            #set target and msg
+            target=target_and_message.split(':')[0]
+            msg=target_and_message.split(':')[1]
+            
+            #send msg to target
+            self.private_send(msg,target)                    
 
+            return
+        elif message == "public message": # send to all clients
+            #what the client broadcasts to everyone
+            message=self.client.recv(1024).decode('ascii')
+            print('{} : {!r}'.format(self.client_name, message))
+            self.server.broadcast(message, self.sockname)
+            return
+        elif message=="q" or message=="disconnection":
+            self.client_disconnecting()
+
+    def private_send(self,msg,target):
+        for connection in self.server.connections:
+            if connection.client_name == target:
+                print("sending message to " + str(connection.client_name))
+                msg=str(self.client_name)+": "+ msg
+                connection.send(msg)
+                return
+        pass
+
+    def get_clients_list(self):
+        list=""
+        for connection in self.server.connections:
+            list = list + str(connection.client_name) +":"+ str(connection.sockname) +"|" 
+        return list
+
+    def client_disconnecting(self):
+        print("[*] Disconnecting "+str(self.client_name) )
+        
 
 
 #ACTUAL SERVER 
@@ -92,7 +136,6 @@ class Server(threading.Thread):
 
 # function that is the thread that manages the sending of the server
 def server_managing(server):
-
     while True:
         ipt = input('')
         
@@ -120,6 +163,9 @@ def server_managing(server):
             print("sending msg to "+ str(server.connections[int(target)].sockname))
             server.connections[int(target)].send(msg)
             pass
+
+HOST='172.104.145.43'
+PORT=1111
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Chatroom Server')
