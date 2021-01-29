@@ -47,6 +47,12 @@ class Send(threading.Thread):
     def run(self):
         while True: 
             request=input("What is your request? : ")
+            
+            if request=="quit":
+                self.sock.close()
+                print("disconnecting from server")
+                os._exit(0)
+            
             self.request_to_server(request)
 
     def request_to_server(self,request):
@@ -74,9 +80,10 @@ class Send(threading.Thread):
             self.sock.sendall(message.encode('ascii'))
             print("[*] Message sended to all connected Clients")
             pass
+        
 
-        elif request == "quit": #deconnection from server
-            pass
+
+
     def show_client_list(self,client_list):
         for client_sockname in client_list.split("|"):
             if client_sockname != "":

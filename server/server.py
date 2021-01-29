@@ -27,7 +27,7 @@ class ServerSocket(threading.Thread):
                 # Client has closed the socket, exit the thread
                 print('{} has closed the connection'.format(self.sockname))
                 self.client.close()
-                self.server.remove_connection(self)
+                #self.server.remove_connection(self)
                 return
 
     def send(self, message):
@@ -59,8 +59,6 @@ class ServerSocket(threading.Thread):
             print('{} : {!r}'.format(self.client_name, message))
             self.server.broadcast(message, self.sockname)
             return
-        elif message=="q" or message=="disconnection":
-            self.client_disconnecting()
 
     def private_send(self,msg,target):
         for connection in self.server.connections:
@@ -77,9 +75,6 @@ class ServerSocket(threading.Thread):
             list = list + str(connection.client_name) +":"+ str(connection.sockname) +"|" 
         return list
 
-    def client_disconnecting(self):
-        print("[*] Disconnecting "+str(self.client_name) )
-        
 
 
 #ACTUAL SERVER 
