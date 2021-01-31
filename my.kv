@@ -1,0 +1,60 @@
+<MyBoxLayout>
+    orientation: "vertical"
+    rows:3
+    msg: msg
+    msg_output:msg_output
+    #myrecicleview: myrecicleview
+    Label:
+        size_hint_y: 0.1
+        text: "TOP"
+        canvas.before:
+            Color:
+                rgba: (0,0,1,1)#blue
+            Rectangle:
+                size:self.size
+                pos:self.pos
+
+    
+    # MyRecycleView:
+    #     size_hint_x:1
+    #     size_hint_y: 0.6
+    #     id: myrecicleview
+    #     orientation: "vertical"
+    #     viewclass: "Label"
+    #     RecycleBoxLayout:
+    #         size_hint_x:1
+    #         orientation: "vertical"
+    #         size_hint_y:None
+    #         size_hint_x:None
+    #         height: self.minimum_height
+    #         text_size:root.width,None
+    ScrollView:
+        size:1,0.8
+        Label:
+            id:msg_output
+            #text :'yay moo cow foo bar moo baa ' * 100
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+
+    
+    FloatLayout:
+        size_hint_y: 0.1
+        canvas.before:
+            Color:
+                rgba: (0,1,0,1) #green 
+            Rectangle:
+                size:self.size
+                pos:self.pos
+        Button:
+            text: "send"
+            size_hint: 0.2, 1
+            font_size: 0.2 * self.width
+            pos_hint: {"x":0.8,"y":0}
+            on_press: root.send()
+        
+        TextInput:
+            id: msg
+            multiline: False
+            size_hint: (.8,1)
+            text_size: self.width, None
