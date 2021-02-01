@@ -1,6 +1,7 @@
 <MyBoxLayout>
     orientation: "vertical"
     rows:3
+    scrollview:scrollview
     msg: msg
     msg_output:msg_output
     #myrecicleview: myrecicleview
@@ -15,28 +16,23 @@
                 pos:self.pos
 
     
-    # MyRecycleView:
-    #     size_hint_x:1
-    #     size_hint_y: 0.6
-    #     id: myrecicleview
-    #     orientation: "vertical"
-    #     viewclass: "Label"
-    #     RecycleBoxLayout:
-    #         size_hint_x:1
-    #         orientation: "vertical"
-    #         size_hint_y:None
-    #         size_hint_x:None
-    #         height: self.minimum_height
-    #         text_size:root.width,None
     ScrollView:
+        id: scrollview
+        do_scroll_x:False
+        do_scroll_y:True
         size:1,0.8
         Label:
             id:msg_output
-            #text :'yay moo cow foo bar moo baa ' * 100
             size_hint_y: None
             height: self.texture_size[1]
             text_size: self.width, None
-
+            halign:"right"
+            canvas.before:
+                Color:
+                    rgba: (0,1,1,1)#blue
+                Rectangle:
+                    size:self.size
+                    pos:self.pos
     
     FloatLayout:
         size_hint_y: 0.1
